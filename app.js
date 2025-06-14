@@ -1,11 +1,22 @@
 const express = require('express');
+const cors = require('cors'); 
+
 const app = express();
 
 //dotenv모듈
 const dotenv = require('dotenv');
 dotenv.config();
 
-app.listen(process.env.PORT);
+// CORS 설정
+app.use(cors({ 
+    origin: 'http://localhost:3000',
+    credentials: true 
+  }));
+
+app.listen(process.env.PORT, ()=>{
+    console.log('server is running');
+  });
+
 
 const userRouter = require('./routes/users');
 const bookRouter = require('./routes/books');
