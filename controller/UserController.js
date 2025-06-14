@@ -22,7 +22,11 @@ const join = (req, res) => {
                 console.log(err);
                 return res.status(StatusCodes.BAD_REQUEST).end();
             }
-            return res.status(StatusCodes.CREATED).json(results);
+            if(results.affectedRows)
+                return res.status(StatusCodes.CREATED).json(results);
+            else {
+                return res.status(StatusCodes.BAD_REQUEST).end();
+            }
     })
 };
 
@@ -45,9 +49,10 @@ const login = (req, res) => {
             // 디비 비밀번호랑 비교
             if(loginUser && loginUser.password == hashPassword) {
                 const token = jwt.sign({
+                    id : loginUser.id,
                     email : loginUser.email
                 }, process.env.PRIVATE_KEY,{
-                    expiresIn : '5m',
+                    expiresIn : '100m',
                     issuer : "sieun"
                 });
 
@@ -56,7 +61,7 @@ const login = (req, res) => {
                 });
                 console.log(token);
 
-                return res.status(StatusCodes.OK).json(results);
+                return res.status(StatusCodes.OK).json({...results[0], token:token});
             } else {
                 return res.status(StatusCodes.UNAUTHORIZED).end();
             }
